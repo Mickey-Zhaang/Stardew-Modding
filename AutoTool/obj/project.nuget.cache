@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "zvy3UGazToQaRitQJXf0bDcIAHx3ycwGvqbbXltnQNPc8XgpyTj6oDzDBJSiGFR4QL/CXi5LIFr9dGpFwrSDiA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\micke\\Desktop\\test\\AutoTool\\AutoTool.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\micke\\.nuget\\packages\\pathoschild.stardew.modbuildconfig\\4.4.0\\pathoschild.stardew.modbuildconfig.4.4.0.nupkg.sha512"
+  ],
+  "logs": []
+}

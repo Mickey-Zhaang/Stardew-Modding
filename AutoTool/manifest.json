@@ -1,0 +1,9 @@
+{
+    "Name": "AutoTool",
+    "Author": "Mickey",
+    "Version": "1.0.2",
+    "Description": "Switches tools automatically based on tile clicked -- only works if the required tool is in the player's inventory",
+    "UniqueID": "AutoTool.autotool",
+    "EntryDll": "AutoTool.dll",
+    "UpdateKeys": []
+}

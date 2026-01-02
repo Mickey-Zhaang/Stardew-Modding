@@ -1,0 +1,8 @@
+C:\Users\micke\Desktop\test\Magicka\obj\Debug\net6.0\Magicka.csproj.AssemblyReference.cache
+C:\Users\micke\Desktop\test\Magicka\obj\Debug\net6.0\Magicka.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\micke\Desktop\test\Magicka\obj\Debug\net6.0\Magicka.AssemblyInfoInputs.cache
+C:\Users\micke\Desktop\test\Magicka\obj\Debug\net6.0\Magicka.AssemblyInfo.cs
+C:\Users\micke\Desktop\test\Magicka\obj\Debug\net6.0\Magicka.csproj.CoreCompileInputs.cache
+C:\Users\micke\Desktop\test\Magicka\bin\Debug\net6.0\Magicka.deps.json
+C:\Users\micke\Desktop\test\Magicka\bin\Debug\net6.0\Magicka.dll
+C:\Users\micke\Desktop\test\Magicka\obj\Debug\net6.0\Magicka.dll
