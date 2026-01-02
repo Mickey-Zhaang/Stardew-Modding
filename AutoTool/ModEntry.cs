@@ -41,14 +41,39 @@ namespace AutoTool
 
             if (e.Button.IsUseToolButton())
             {
-                string? tool = DetermineRequiredTool(e.Cursor.GrabTile);
-                if (tool != null)
+                // Only auto-switch tools if player is currently holding a farming tool
+                // (Axe, Pickaxe, Hoe, WateringCan, Scythe) - excludes weapons
+                if (IsFarmingTool(Game1.player.CurrentItem))
                 {
-                    SwitchTools(tool);
+                    string? tool = DetermineRequiredTool(e.Cursor.GrabTile);
+                    if (tool != null)
+                    {
+                        SwitchTools(tool);
+                    }
                 }
-
             }
 
+        }
+
+        /// <summary>
+        /// Checks if the item is a farming tool (Axe, Pickaxe, Hoe, WateringCan, or Scythe)
+        /// Excludes weapons and other non-farming tools
+        /// </summary>
+        /// <param name="item">The item to check</param>
+        /// <returns>True if the item is a farming tool, false otherwise</returns>
+        private bool IsFarmingTool(Item? item)
+        {
+            if (item == null) return false;
+
+            return item switch
+            {
+                Axe => true,
+                Pickaxe => true,
+                Hoe => true,
+                WateringCan => true,
+                MeleeWeapon melee when melee.isScythe() => true, // Scythe is a MeleeWeapon
+                _ => false
+            };
         }
 
         /// <summary>
@@ -70,7 +95,8 @@ namespace AutoTool
                     _ when obj.IsBreakableStone() => "Pickaxe",
                     _ when obj.IsTwig() => "Axe",
                     _ when obj is BreakableContainer => "MeleeWeapon",
-                    _ => throw new InvalidOperationException($"Unknown obj found: {obj.Name}")
+                    // Objects like Chests, machines, etc. don't need tools - return null
+                    _ => null
                 };
             }
 
@@ -109,7 +135,8 @@ namespace AutoTool
                     600 or 602 => "Axe",
                     148 or 622 or 672 or 752 or 754 or 756 or 758 => "Pickaxe",
                     44 or 46 => "Scythe",
-                    _ => throw new InvalidOperationException($"Unknown resource clump index: {clump.parentSheetIndex.Value}")
+                    // Unknown resource clump - return null instead of throwing
+                    _ => null
                 };
             }
 
