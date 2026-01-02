@@ -1,8 +1,0 @@
-C:\Users\micke\Desktop\test\AutoTool\bin\Debug\net6.0\AutoTool.deps.json
-C:\Users\micke\Desktop\test\AutoTool\bin\Debug\net6.0\AutoTool.dll
-C:\Users\micke\Desktop\test\AutoTool\obj\Debug\net6.0\AutoTool.csproj.AssemblyReference.cache
-C:\Users\micke\Desktop\test\AutoTool\obj\Debug\net6.0\AutoTool.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\micke\Desktop\test\AutoTool\obj\Debug\net6.0\AutoTool.AssemblyInfoInputs.cache
-C:\Users\micke\Desktop\test\AutoTool\obj\Debug\net6.0\AutoTool.AssemblyInfo.cs
-C:\Users\micke\Desktop\test\AutoTool\obj\Debug\net6.0\AutoTool.csproj.CoreCompileInputs.cache
-C:\Users\micke\Desktop\test\AutoTool\obj\Debug\net6.0\AutoTool.dll
