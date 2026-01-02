@@ -35,12 +35,7 @@ namespace Magicka
         {
             this.Monitor.Log("Game launched - registering console commands...", LogLevel.Debug);
             // Add console command to give the Spell Tome
-            this.Helper.ConsoleCommands.Add("givetome", "Gives you a Spell Tome", this.GiveSpellTome);
-            // Add console command to spawn monsters for testing
-            this.Helper.ConsoleCommands.Add("spawnmonster", "Spawns a monster near you for testing. Usage: spawnmonster [type] [count]. Types: slime, bat, bug, skeleton", this.SpawnMonster);
-            this.Monitor.Log("Console commands registered:", LogLevel.Info);
-            this.Monitor.Log("  - 'givetome' - Get a Spell Tome", LogLevel.Info);
-            this.Monitor.Log("  - 'spawnmonster [type] [count]' - Spawn monsters (e.g., 'spawnmonster slime 3')", LogLevel.Info);
+            this.Helper.ConsoleCommands.Add("spelltome", "Gives you a Spell Tome", this.GiveSpellTome);
         }
 
         private void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
@@ -87,84 +82,6 @@ namespace Magicka
             {
                 this.Monitor.Log($"Error creating SpellTome: {ex.Message}\n{ex.StackTrace}", LogLevel.Error);
             }
-        }
-
-        private void SpawnMonster(string command, string[] args)
-        {
-            if (!Context.IsWorldReady)
-            {
-                this.Monitor.Log("You must be in-game to use this command.", LogLevel.Warn);
-                return;
-            }
-
-            if (Game1.player == null || Game1.currentLocation == null)
-            {
-                this.Monitor.Log("Player or location is null!", LogLevel.Error);
-                return;
-            }
-
-            // Parse arguments
-            string monsterType = args.Length > 0 ? args[0].ToLower() : "slime";
-            int count = args.Length > 1 && int.TryParse(args[1], out int parsedCount) ? parsedCount : 1;
-
-            // Get player position in tiles
-            Vector2 playerTile = new Vector2(
-                (int)(Game1.player.Position.X / 64f),
-                (int)(Game1.player.Position.Y / 64f)
-            );
-
-            // Spawn monsters in a circle around the player
-            for (int i = 0; i < count; i++)
-            {
-                Monster? monster = null;
-                Vector2 spawnPosition = playerTile;
-
-                // Calculate spawn position in a circle around player
-                if (count > 1)
-                {
-                    float angle = (float)(2 * Math.PI * i / count);
-                    float radius = 2f; // 2 tiles away
-                    spawnPosition = new Vector2(
-                        playerTile.X + (float)Math.Cos(angle) * radius,
-                        playerTile.Y + (float)Math.Sin(angle) * radius
-                    );
-                }
-                else
-                {
-                    // Single monster spawns 2 tiles in front of player
-                    spawnPosition = playerTile + new Vector2(0, -2);
-                }
-
-                // Create monster based on type
-                switch (monsterType)
-                {
-                    case "slime":
-                    case "green":
-                        monster = new GreenSlime(spawnPosition * 64f, 0); // 0 = normal slime
-                        break;
-                    case "bat":
-                        monster = new Bat(spawnPosition * 64f, 0); // 0 = normal bat
-                        break;
-                    case "bug":
-                        monster = new Bug(spawnPosition * 64f, 0);
-                        break;
-                    case "skeleton":
-                        monster = new Skeleton(spawnPosition * 64f);
-                        break;
-                    default:
-                        this.Monitor.Log($"Unknown monster type: {monsterType}. Using slime instead.", LogLevel.Warn);
-                        monster = new GreenSlime(spawnPosition * 64f, 0);
-                        break;
-                }
-
-                if (monster != null)
-                {
-                    Game1.currentLocation.characters.Add(monster);
-                    this.Monitor.Log($"Spawned {monsterType} at {spawnPosition}", LogLevel.Info);
-                }
-            }
-
-            this.Monitor.Log($"Spawned {count} {monsterType}(s) near you!", LogLevel.Info);
         }
 
         private void OnButtonPressed(object? sender, ButtonPressedEventArgs e)

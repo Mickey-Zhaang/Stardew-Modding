@@ -1,0 +1,9 @@
+{
+    "Name": "Spawner",
+    "Author": "Mickey",
+    "Version": "1.0.0",
+    "Description": "Spawns Monsters for me",
+    "UniqueID": "Spawner.spawn",
+    "EntryDll": "Spawner.dll",
+    "UpdateKeys": []
+}
