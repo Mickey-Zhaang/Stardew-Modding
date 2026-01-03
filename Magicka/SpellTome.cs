@@ -61,13 +61,38 @@ namespace Magicka
 
         /// <summary>
         /// Override draw method to use object sprite sheet instead of tools sprite sheet
+        /// Animated when equipped in hotbar, static otherwise
         /// </summary>
         public override void drawInMenu(SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
         {
-            // Draw using the Objects sprite sheet instead of Tools sprite sheet
-            // ParentSheetIndex 102 = Book sprite
-            Rectangle sourceRect = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, this.ParentSheetIndex, 16, 16);
-            spriteBatch.Draw(Game1.objectSpriteSheet, location + new Vector2(32f, 32f) * scaleSize, sourceRect, color * transparency, 0f, new Vector2(8f, 8f) * scaleSize, scaleSize * 4f, SpriteEffects.None, layerDepth);
+            // Check if player is holding this tome (for hotbar animation)
+            bool isEquipped = Game1.player?.CurrentTool == this;
+
+            // Use animation system if available
+            if (ModEntry.SpellTomeAnimation?.IsLoaded == true)
+            {
+                // Get the appropriate frame (current frame if equipped, frame 0 if not)
+                int frameToDraw = isEquipped ? ModEntry.SpellTomeAnimation.CurrentFrame : 0;
+                Rectangle sourceRect = ModEntry.SpellTomeAnimation.GetFrameRect(frameToDraw);
+
+                spriteBatch.Draw(
+                    ModEntry.SpellTomeAnimation.Texture!,
+                    location + new Vector2(32f, 32f) * scaleSize,
+                    sourceRect,
+                    color * transparency,
+                    0f,
+                    new Vector2(8f, 8f) * scaleSize,
+                    scaleSize * 4f,
+                    SpriteEffects.None,
+                    layerDepth
+                );
+            }
+            else
+            {
+                // Fall back to game's object sprite sheet if custom texture not loaded
+                Rectangle sourceRect = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, this.ParentSheetIndex, 16, 16);
+                spriteBatch.Draw(Game1.objectSpriteSheet, location + new Vector2(32f, 32f) * scaleSize, sourceRect, color * transparency, 0f, new Vector2(8f, 8f) * scaleSize, scaleSize * 4f, SpriteEffects.None, layerDepth);
+            }
         }
     }
 }
