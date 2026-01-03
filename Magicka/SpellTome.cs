@@ -69,14 +69,15 @@ namespace Magicka
             bool isEquipped = Game1.player?.CurrentTool == this;
 
             // Use animation system if available
-            if (ModEntry.SpellTomeAnimation?.IsLoaded == true)
+            var animation = ModEntry.AnimationManager?.GetAnimation("spelltome");
+            if (animation?.IsLoaded == true)
             {
                 // Get the appropriate frame (current frame if equipped, frame 0 if not)
-                int frameToDraw = isEquipped ? ModEntry.SpellTomeAnimation.CurrentFrame : 0;
-                Rectangle sourceRect = ModEntry.SpellTomeAnimation.GetFrameRect(frameToDraw);
+                int frameToDraw = isEquipped ? animation.CurrentFrame : 0;
+                Rectangle sourceRect = animation.GetFrameRect(frameToDraw);
 
                 spriteBatch.Draw(
-                    ModEntry.SpellTomeAnimation.Texture!,
+                    animation.Texture!,
                     location + new Vector2(32f, 32f) * scaleSize,
                     sourceRect,
                     color * transparency,

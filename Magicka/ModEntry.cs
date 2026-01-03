@@ -15,8 +15,8 @@ namespace Magicka
         private SpellTomeManager? _spellTomeManager;
         private AnimationManager? _animationManager;
 
-        // Animation for SpellTome
-        public static SpriteAnimation? SpellTomeAnimation { get; private set; }
+        // Expose AnimationManager for accessing animations (e.g., from SpellTome)
+        public static AnimationManager? AnimationManager { get; private set; }
 
         public override void Entry(IModHelper helper)
         {
@@ -24,14 +24,16 @@ namespace Magicka
             _spellManager = new SpellManager();
             _spellTomeManager = new SpellTomeManager(this.Monitor);
             _animationManager = new AnimationManager(this.Monitor);
+            AnimationManager = _animationManager; // Expose for static access
 
-            // Register SpellTome animation
-            SpellTomeAnimation = _animationManager.RegisterAnimation(
+            // Register SpellTome animation with automatic play/stop condition
+            _animationManager.RegisterAnimation(
                 "spelltome",
                 helper,
                 "assets/spelltome.png",
                 frameWidth: 16,
-                frameTime: 250f // 4fps
+                frameTime: 250f, // 4fps
+                shouldPlay: () => Game1.player?.CurrentTool is SpellTome
             );
 
             // Log initialization
@@ -77,23 +79,8 @@ namespace Magicka
             // Update spell manager (handles projectile tracking and max range)
             _spellManager?.Update(Game1.currentLocation);
 
-            // Update all animations
+            // Update all animations (handles frame updates and automatic play/stop)
             _animationManager?.Update(Game1.currentGameTime);
-
-            // Control SpellTome animation based on whether player is holding it
-            if (SpellTomeAnimation != null)
-            {
-                bool isHoldingTome = Game1.player?.CurrentTool is SpellTome;
-
-                if (isHoldingTome && !SpellTomeAnimation.IsPlaying)
-                {
-                    SpellTomeAnimation.Play();
-                }
-                else if (!isHoldingTome && SpellTomeAnimation.IsPlaying)
-                {
-                    SpellTomeAnimation.Stop();
-                }
-            }
         }
 
     }

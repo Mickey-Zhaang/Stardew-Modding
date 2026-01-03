@@ -41,39 +41,13 @@ namespace AutoTool
 
             if (e.Button.IsUseToolButton())
             {
-                // Only auto-switch tools if player is currently holding a farming tool
-                // (Axe, Pickaxe, Hoe, WateringCan, Scythe) - excludes weapons
-                if (IsFarmingTool(Game1.player.CurrentItem))
+                string? tool = DetermineRequiredTool(e.Cursor.GrabTile);
+                if (tool != null)
                 {
-                    string? tool = DetermineRequiredTool(e.Cursor.GrabTile);
-                    if (tool != null)
-                    {
-                        SwitchTools(tool);
-                    }
+                    SwitchTools(tool);
                 }
             }
 
-        }
-
-        /// <summary>
-        /// Checks if the item is a farming tool (Axe, Pickaxe, Hoe, WateringCan, or Scythe)
-        /// Excludes weapons and other non-farming tools
-        /// </summary>
-        /// <param name="item">The item to check</param>
-        /// <returns>True if the item is a farming tool, false otherwise</returns>
-        private bool IsFarmingTool(Item? item)
-        {
-            if (item == null) return false;
-
-            return item switch
-            {
-                Axe => true,
-                Pickaxe => true,
-                Hoe => true,
-                WateringCan => true,
-                MeleeWeapon melee when melee.isScythe() => true, // Scythe is a MeleeWeapon
-                _ => false
-            };
         }
 
         /// <summary>
@@ -111,19 +85,6 @@ namespace AutoTool
                 // Check for grasses
                 if (feature is Grass)
                     return "Scythe";
-            }
-
-            // Check for tilled dirt
-            HoeDirt? hoeDirt = Game1.currentLocation.GetHoeDirtAtTile(tile);
-            if (hoeDirt != null)
-            {
-                DebugLogger($"Found water-able tile!: {hoeDirt}");
-
-                // Check if hoeDirt needs watering
-                if (!hoeDirt.isWatered())
-                {
-                    return "Watering can";
-                }
             }
 
             // Check resource clumps
@@ -173,7 +134,6 @@ namespace AutoTool
                         "MeleeWeapon" => tool is MeleeWeapon melee,
                         "Pickaxe" => tool is Pickaxe,
                         "Axe" => tool is Axe,
-                        "Watering can" => tool is WateringCan,
                         _ => false
                     };
 
