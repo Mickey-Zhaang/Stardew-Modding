@@ -26,6 +26,12 @@ namespace AutoTool
     {
         bool verbose = false;
 
+        // Buffer time in milliseconds to prevent tool switching too quickly
+        private const int TOOL_SWITCH_BUFFER_MS = 500;
+
+        // Track when the last tool switch occurred
+        private double _lastToolSwitchTime = 0;
+
         public override void Entry(IModHelper helper)
         {
             // Log Initialization
@@ -33,6 +39,16 @@ namespace AutoTool
 
             // In Game Subscriptions
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+            helper.Events.GameLoop.UpdateTicking += this.OnUpdateTicking;
+        }
+
+        private void OnUpdateTicking(object? sender, UpdateTickingEventArgs e)
+        {
+            // Update last tool switch time if player is using a tool
+            if (Game1.player != null && Game1.player.UsingTool)
+            {
+                _lastToolSwitchTime = Game1.currentGameTime.TotalGameTime.TotalMilliseconds;
+            }
         }
 
         private void OnButtonPressed(object? sender, ButtonPressedEventArgs e)
@@ -41,13 +57,68 @@ namespace AutoTool
 
             if (e.Button.IsUseToolButton())
             {
+                // Check if we should prevent tool switching
+                if (ShouldPreventToolSwitch())
+                {
+                    DebugLogger("Tool switch prevented - player is using tool or buffer time not elapsed");
+                    return;
+                }
+
                 string? tool = DetermineRequiredTool(e.Cursor.GrabTile);
                 if (tool != null)
                 {
-                    SwitchTools(tool);
+                    // Only switch if it's a different tool
+                    if (GetCurrentToolType() != tool)
+                    {
+                        if (SwitchTools(tool))
+                        {
+                            _lastToolSwitchTime = Game1.currentGameTime.TotalGameTime.TotalMilliseconds;
+                        }
+                    }
                 }
             }
 
+        }
+
+        /// <summary>
+        /// Checks if tool switching should be prevented (player using tool or buffer time not elapsed)
+        /// </summary>
+        private bool ShouldPreventToolSwitch()
+        {
+            if (Game1.player == null) return true;
+
+            // Prevent if player is currently using a tool
+            if (Game1.player.UsingTool)
+            {
+                return true;
+            }
+
+            // Prevent if buffer time hasn't elapsed since last switch
+            double currentTime = Game1.currentGameTime.TotalGameTime.TotalMilliseconds;
+            double timeSinceLastSwitch = currentTime - _lastToolSwitchTime;
+
+            if (timeSinceLastSwitch < TOOL_SWITCH_BUFFER_MS)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Gets the current tool type as a string (for comparison)
+        /// </summary>
+        private string? GetCurrentToolType()
+        {
+            if (Game1.player?.CurrentTool == null) return null;
+
+            var tool = Game1.player.CurrentTool;
+            if (tool is MeleeWeapon melee && melee.isScythe()) return "Scythe";
+            if (tool is MeleeWeapon) return "MeleeWeapon";
+            if (tool is Pickaxe) return "Pickaxe";
+            if (tool is Axe) return "Axe";
+
+            return null;
         }
 
         /// <summary>
