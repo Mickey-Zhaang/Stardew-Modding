@@ -20,6 +20,13 @@ namespace Magicka.Spells
         /// <param name="targetPosition">The target position in world coordinates</param>
         /// <param name="location">The game location where the spell is being cast</param>
         void Cast(Farmer player, Vector2 targetPosition, GameLocation location);
+
+        /// <summary>
+        /// Updates the spell's state (e.g., tracking projectiles, checking conditions)
+        /// Called every game tick. Spells that don't need updates can leave this empty.
+        /// </summary>
+        /// <param name="location">The current game location</param>
+        void Update(GameLocation location);
     }
 }
 

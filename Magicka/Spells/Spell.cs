@@ -76,6 +76,15 @@ namespace Magicka.Spells
                 _ => new Vector2(0, -1)
             };
         }
+
+        /// <summary>
+        /// Updates the spell's state. Default implementation does nothing.
+        /// Override in derived classes if the spell needs per-frame updates.
+        /// </summary>
+        public virtual void Update(GameLocation location)
+        {
+            // Default: no update needed
+        }
     }
 }
 

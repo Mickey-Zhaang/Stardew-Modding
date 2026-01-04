@@ -1,4 +1,5 @@
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Projectiles;
@@ -13,16 +14,19 @@ namespace Magicka.Spells
     {
         public override string Name => "Fireball";
 
-        private readonly Action<BasicProjectile, Vector2, Farmer>? _onProjectileCreated;
-
-        /// <summary>
-        /// Creates a new FireballSpell instance
-        /// </summary>
-        /// <param name="onProjectileCreated">Optional callback when a projectile is created (for tracking)</param>
-        public FireballSpell(Action<BasicProjectile, Vector2, Farmer>? onProjectileCreated = null)
+        private class ProjectileData
         {
-            _onProjectileCreated = onProjectileCreated;
+            public Vector2 StartPosition { get; set; }
+            public Farmer Caster { get; set; }
+
+            public ProjectileData(Vector2 startPosition, Farmer caster)
+            {
+                StartPosition = startPosition;
+                Caster = caster;
+            }
         }
+
+        private readonly Dictionary<BasicProjectile, ProjectileData> _projectileData = new();
 
         public override void Cast(Farmer player, Vector2 targetPosition, GameLocation location)
         {
@@ -51,19 +55,70 @@ namespace Magicka.Spells
 
             location.projectiles.Add(fireball);
 
-            _onProjectileCreated?.Invoke(fireball, startPos, player);
+            // Track the projectile for max range checking
+            _projectileData[fireball] = new ProjectileData(startPos, player);
         }
 
         /// <summary>
-        /// Explodes the fireball at the given position
+        /// Updates fireball projectiles (e.g., checking max range)
+        /// </summary>
+        public override void Update(GameLocation location)
+        {
+            if (location == null) return;
+
+            List<BasicProjectile> toRemove = new List<BasicProjectile>();
+
+            foreach (var kvp in _projectileData.ToList())
+            {
+                BasicProjectile projectile = kvp.Key;
+                ProjectileData data = kvp.Value;
+
+                // If projectile was removed (collided with something), clean up
+                if (!location.projectiles.Contains(projectile))
+                {
+                    toRemove.Add(projectile);
+                    continue;
+                }
+
+                // Check if projectile reached max range
+                Vector2 currentPos = projectile.position.Value;
+                float distanceTraveled = Vector2.Distance(data.StartPosition, currentPos);
+
+                if (distanceTraveled >= Fireball.MaxRange)
+                {
+                    // Explode at max range
+                    ExplodeAtPosition(location, (int)currentPos.X, (int)currentPos.Y, data.Caster);
+                    location.projectiles.Remove(projectile);
+                    toRemove.Add(projectile);
+                }
+            }
+
+            // Clean up removed projectiles
+            foreach (var projectile in toRemove)
+            {
+                _projectileData.Remove(projectile);
+            }
+        }
+
+        /// <summary>
+        /// Explodes the fireball at the given position (collision callback)
         /// </summary>
         private void Explode(GameLocation location, int xPosition, int yPosition, Character who)
         {
             Vector2 tile = new Vector2(xPosition / 64, yPosition / 64);
+            Farmer caster = who as Farmer ?? Game1.player;
 
-            location.explode(tile, Fireball.ExplosionRadius, Game1.player, false, -1);
+            location.explode(tile, Fireball.ExplosionRadius, caster, false, -1);
         }
 
+        /// <summary>
+        /// Explodes at the given position (for max range)
+        /// </summary>
+        private void ExplodeAtPosition(GameLocation location, int xPosition, int yPosition, Farmer caster)
+        {
+            Vector2 tile = new Vector2(xPosition / 64, yPosition / 64);
+            location.explode(tile, Fireball.ExplosionRadius, caster, false, -1);
+        }
     }
 }
 
