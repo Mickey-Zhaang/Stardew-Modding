@@ -12,7 +12,7 @@ namespace Magicka.Spells
             public const int Damage = 10;
             public const int SpriteIndex = 10;
             public const int TailLength = 3;
-            public const float RotationVelocity = 1f;
+            public const float RotationVelocity = 0f; // Disabled rotation
             public const int ExplosionRadius = 2;
         }
     }

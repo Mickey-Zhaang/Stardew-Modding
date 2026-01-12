@@ -1,8 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using Magicka.Animations;
+using Magicka.Projectiles;
 
 namespace Magicka
 {
@@ -35,6 +38,19 @@ namespace Magicka
                 frameTime: 250f, // 4fps
                 shouldPlay: () => Game1.player?.CurrentTool is SpellTome
             );
+
+            // Load custom firebolt sprite for FireballProjectile - REQUIRED, no fallback
+            try
+            {
+                Texture2D fireboltTexture = helper.ModContent.Load<Texture2D>("assets/firebolt.png");
+                FireballProjectile.SetCustomTexture(fireboltTexture);
+                this.Monitor.Log("Custom firebolt sprite loaded successfully", LogLevel.Info);
+            }
+            catch (Exception ex)
+            {
+                this.Monitor.Log($"ERROR: Could not load firebolt sprite: {ex.Message}. Fireball projectiles will not render.", LogLevel.Error);
+                // Don't allow mod to continue if sprite doesn't load - projectiles won't work
+            }
 
             // Log initialization
             this.Monitor.Log("Magicka initialized", LogLevel.Info);

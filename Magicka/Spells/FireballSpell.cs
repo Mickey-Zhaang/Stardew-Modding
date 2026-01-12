@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using StardewValley;
-using StardewValley.Projectiles;
+using Magicka.Projectiles;
 using static Magicka.Spells.Constants;
 
 namespace Magicka.Spells
@@ -26,7 +26,7 @@ namespace Magicka.Spells
             }
         }
 
-        private readonly Dictionary<BasicProjectile, ProjectileData> _projectileData = new();
+        private readonly Dictionary<FireballProjectile, ProjectileData> _projectileData = new();
 
         public override void Cast(Farmer player, Vector2 targetPosition, GameLocation location)
         {
@@ -36,7 +36,7 @@ namespace Magicka.Spells
             Vector2 startPos = GetSpellStartPosition(player);
 
             // Create the projectile
-            BasicProjectile fireball = new BasicProjectile(
+            FireballProjectile fireball = new FireballProjectile(
                 damageToFarmer: Fireball.Damage,
                 spriteIndex: Fireball.SpriteIndex,
                 bouncesTillDestruct: 0,
@@ -66,11 +66,11 @@ namespace Magicka.Spells
         {
             if (location == null) return;
 
-            List<BasicProjectile> toRemove = new List<BasicProjectile>();
+            List<FireballProjectile> toRemove = new List<FireballProjectile>();
 
             foreach (var kvp in _projectileData.ToList())
             {
-                BasicProjectile projectile = kvp.Key;
+                FireballProjectile projectile = kvp.Key;
                 ProjectileData data = kvp.Value;
 
                 // If projectile was removed (collided with something), clean up
