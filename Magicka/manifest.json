@@ -1,9 +1,0 @@
-{
-    "Name": "Magicka",
-    "Author": "Mickey",
-    "Version": "1.0.0",
-    "Description": "Magicka",
-    "UniqueID": "Magicka.magicka",
-    "EntryDll": "Magicka.dll",
-    "UpdateKeys": []
-}
