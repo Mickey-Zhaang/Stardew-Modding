@@ -1,0 +1,15 @@
+{
+    "Name": "TheTeaProject",
+    "Author": "Mickey",
+    "Version": "1.0.0",
+    "Description": "TheTeaProject",
+    "UniqueID": "TheTeaProject.theteaproject",
+    "EntryDll": "TheTeaProject.dll",
+    "Dependencies": [
+        {
+            "UniqueID": "Pathoschild.ContentPatcher",
+            "IsRequired": true
+        }
+    ],
+    "UpdateKeys": []
+}
