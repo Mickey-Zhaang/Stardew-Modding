@@ -13,7 +13,7 @@ namespace TheTeaProject
     public class TeaCatalogue : Tool
     {
         private const int FRAME_COUNT = 3;
-        private const int FRAME_TIME_MS = 200; // 200ms per frame = 5 fps
+        private const int FRAME_TIME_MS = 250; // 250ms per frame = 4 fps
         private int _currentFrame = 0;
         private double _lastFrameTime = 0;
         private Texture2D? _customTexture;
@@ -73,12 +73,8 @@ namespace TheTeaProject
         /// </summary>
         public override void DoFunction(GameLocation location, int x, int y, int power, Farmer who)
         {
-            // Add your tool functionality here
-            // For example: open a menu, display tea information, etc.
-
             if (who == null || location == null) return;
 
-            // Example: Show a message or open a menu
             Game1.showGlobalMessage("Tea Catalogue opened!");
 
             // You can add more functionality here:
@@ -94,12 +90,10 @@ namespace TheTeaProject
         {
             if (_customTexture == null)
             {
-                // Fallback to default tool drawing if texture not loaded
                 base.draw(spriteBatch);
                 return;
             }
 
-            // Update animation frame
             UpdateAnimation();
 
             // Calculate source rectangle for current frame
@@ -165,19 +159,16 @@ namespace TheTeaProject
         }
 
         /// <summary>
-        /// Update animation frame based on time
-        /// Only animates if the tool is currently selected/equipped
+        /// Update animation frame and only animates if the tool is currently selected/equipped
         /// </summary>
         private void UpdateAnimation()
         {
             if (_customTexture == null || Game1.currentGameTime == null) return;
 
-            // Check if this tool is currently selected/equipped
             bool isSelected = IsToolSelected();
 
             if (isSelected)
             {
-                // Animate when selected
                 double currentTime = Game1.currentGameTime.TotalGameTime.TotalMilliseconds;
 
                 // Check if it's time to advance to next frame
@@ -189,7 +180,7 @@ namespace TheTeaProject
             }
             else
             {
-                // Keep on frame 1 (index 0, second frame) when not selected
+                // static frame (frame 1)
                 _currentFrame = 0;
             }
         }
@@ -205,15 +196,6 @@ namespace TheTeaProject
             if (Game1.player.CurrentTool == this)
             {
                 return true;
-            }
-
-            // Also check if it's selected in inventory (hovered over)
-            // This handles the case when viewing inventory
-            if (Game1.activeClickableMenu != null)
-            {
-                // Check if player is hovering over this item in inventory
-                // This is a simplified check - you might need to adjust based on your needs
-                return false; // For now, only animate when equipped
             }
 
             return false;

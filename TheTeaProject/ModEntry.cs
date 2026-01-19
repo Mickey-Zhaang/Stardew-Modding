@@ -12,22 +12,20 @@ namespace TheTeaProject
         bool verbose = false;
         private IContentPatcherAPI? _contentPatcher;
         private Texture2D? _teaCatalogueTexture;
-        private const int TEA_CATALOGUE_OBJECT_ID = 999; // Unique ID for the tool (use a high number to avoid conflicts)
 
         public override void Entry(IModHelper helper)
         {
-            // Log Initialization
-            this.Monitor.Log("TheTeaProject initialized.", LogLevel.Debug);
+            // Log Initialization\
+            DebugLogger("TheTeaProject initialized.");
 
             // Load tea catalogue texture
             try
             {
                 _teaCatalogueTexture = helper.ModContent.Load<Texture2D>("assets/tea_catalogue.png");
-                this.Monitor.Log("Tea Catalogue texture loaded successfully.", LogLevel.Info);
             }
             catch (Exception ex)
             {
-                this.Monitor.Log($"Error loading tea catalogue texture: {ex.Message}", LogLevel.Error);
+                DebugLogger($"Error loading tea catalogue texture: {ex.Message}");
             }
 
             // Subscribe to events
@@ -46,13 +44,11 @@ namespace TheTeaProject
             _contentPatcher = this.Helper.ModRegistry.GetApi<IContentPatcherAPI>("Pathoschild.ContentPatcher");
             if (_contentPatcher == null)
             {
-                this.Monitor.Log("Content Patcher API not available. Some features may not work.", LogLevel.Warn);
+                DebugLogger("Content Patcher API not available. Some features may not work.");
             }
             else
             {
-                this.Monitor.Log("Content Patcher API loaded successfully.", LogLevel.Info);
-
-                // Register custom tokens (if needed)
+                DebugLogger("Content Patcher API loaded successfully.");
                 RegisterContentPatcherTokens();
             }
         }
@@ -66,7 +62,7 @@ namespace TheTeaProject
             {
                 // Example: Trigger a content reload if conditions changed
                 // _contentPatcher.InvalidateCache();
-                this.Monitor.Log("Save loaded - Content Patcher patches are active.", LogLevel.Debug);
+                DebugLogger("Save loaded - Content Patcher patches are active.");
             }
         }
 
@@ -92,8 +88,7 @@ namespace TheTeaProject
                 }
                 return new[] { "0" }; // Default value when not in game
             });
-
-            this.Monitor.Log("Registered custom Content Patcher tokens.", LogLevel.Info);
+            DebugLogger("Registered custom Content Patcher tokens.");
         }
 
         /// <summary>
@@ -117,11 +112,11 @@ namespace TheTeaProject
 
                 if (Game1.player.addItemToInventoryBool(catalogue))
                 {
-                    this.Monitor.Log("Tea Catalogue added to inventory.", LogLevel.Info);
+                    DebugLogger("Tea Catalogue added to inventory.");
                 }
                 else
                 {
-                    this.Monitor.Log("Inventory full - Tea Catalogue dropped at feet.", LogLevel.Warn);
+                    DebugLogger("Inventory full - Tea Catalogue dropped at feet.");
                     Game1.createItemDebris(catalogue, Game1.player.getStandingPosition(), -1, null);
                 }
             }
